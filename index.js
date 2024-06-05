@@ -104,18 +104,18 @@ app.post('/user',verifyToken, async(req, res)=>{
 
 
 
-app.get('/user/get/:id', async(req,res)=>{
+app.get('/user/get/:id',verifyToken, async(req,res)=>{
     const id = req.params.id
     const result = await userCollection.findOne({_id: new ObjectId(id)})
     res.send(result);
 })
 
-app.get('/user/:email', async(req,res)=>{
+app.get('/user/:email',verifyToken, async(req,res)=>{
     const email = req.params.email
     const result = await userCollection.findOne({email})
     res.send(result);
 })
-app.patch('/user/:email', async(req,res)=>{
+app.patch('/user/:email', verifyToken, async(req,res)=>{
     const email = req.params.email
     const userData = req.body
     const result = await userCollection.updateOne({email}, {$set: userData}, {upsert: true})
