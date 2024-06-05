@@ -26,12 +26,12 @@ function createToken(user){
 }
 
 function verifyToken (req, res, next){
-    const token = req.headers.authorization.split("")[1];
+    const token = req.headers.authorization.split(" ")[1];
     const verify = jwt.verify(token, 'secret')
     if(!verify?.email){
         return res.send("you are not authorized")
     }
-    req.user = verify.email
+    req.email = verify.email
     next()
 }
 
@@ -69,8 +69,9 @@ app.get('/cars/:id', async(req, res)=>{
     const carsData = await carsCollection.findOne({_id: new ObjectId(id)})
     res.send(carsData)
 })
-app.patch('/cars/:id',verifyToken, async(req, res)=>{
+app.patch('/cars/:id', verifyToken, async(req, res)=>{
     const id = req.params.id
+    console.log(id)
     const updatedData = req.body
     const carsData = await carsCollection.updateOne(
         {_id: new ObjectId(id)},
@@ -87,7 +88,7 @@ app.delete('/cars/:id', verifyToken, async(req, res)=>{
 })
 
 // user
-app.post('/user',verifyToken, async(req, res)=>{
+app.post('/user', async(req, res)=>{
     const user = req.body;
     const token = createToken(user)
     const isUserExist = await userCollection.findOne({email: user?.email})
